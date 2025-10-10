@@ -1,1 +1,2 @@
+*.pdf filter=lfs diff=lfs merge=lfs -text
 To-Be-Study/Comparative[[:space:]]DC-DC[[:space:]]converters[[:space:]]in[[:space:]]PV[[:space:]]using[[:space:]]different[[:space:]]MPPT.pdf filter=lfs diff=lfs merge=lfs -text
