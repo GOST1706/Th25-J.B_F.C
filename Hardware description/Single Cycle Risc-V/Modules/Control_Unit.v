@@ -5,32 +5,33 @@ module Control_Unit(
     input  [2:0] funct3,     // Campo funct3
     input        funct7,     // Bit 30 (funct7[5])
     input        Zero,       // Bandera de cero de la ALU
-
+    
     output       RegWrite,
     output [1:0] ImmSrc,
     output       ALUSrc,
     output       MemWrite,
     output [1:0] ResultSrc,
-    output       PCSrc,      // Se�al para seleccionar PC siguiente
-    output [2:0] ALUControl  // Se�al de control hacia la ALU
+    output       PCSrc,      
+    output [2:0] ALUControl  // Signal de control hacia la ALU
 );
 
-    // Se�al interna entre los decoders
+    // Signal interna entre los decoders
     wire [1:0] ALUOp;
-    wire       Branch;
-
+    wire Branch,Jump,PCt;
     // =============================
     // Instancia del MAIN DECODER
     // =============================
     Main_decoder main_dec (
         .op(op),
+        .funct3(funct3),
         .RegWrite(RegWrite),
         .ImmSrc(ImmSrc),
         .ALUSrc(ALUSrc),
         .MemWrite(MemWrite),
         .ResultSrc(ResultSrc),
+        .ALUOp(ALUOp),
         .Branch(Branch),
-        .ALUOp(ALUOp)
+        .Jump(Jump)
     );
 
     // =============================
@@ -42,11 +43,10 @@ module Control_Unit(
         .ALUOp(ALUOp),
         .ALUControl(ALUControl)
     );
-
     // =============================
-    // L�gica de PCSrc
+    // Logica de PCSrc
     // =============================
-    assign PCSrc = Branch & Zero;
-
+    assign PCt   = Branch & Zero;
+    assign PCSrc = Jump | PCt;
 endmodule
 

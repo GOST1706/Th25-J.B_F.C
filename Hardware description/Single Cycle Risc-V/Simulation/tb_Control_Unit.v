@@ -16,7 +16,7 @@ module tb_Control_Unit;
     wire       PCSrc;
     wire [2:0] ALUControl;
 
-    // Instancia del módulo bajo prueba (UUT)
+    // Instancia del modulo bajo prueba (UUT)
     Control_Unit uut (
         .op(op),
         .funct3(funct3),
@@ -32,7 +32,7 @@ module tb_Control_Unit;
     );
 
     // ==============================================
-    // Simulación principal
+    // Simulacion principal
     // ==============================================
     initial begin
         $display("==================================================================================================================");
@@ -78,7 +78,7 @@ module tb_Control_Unit;
         op = 7'b1100011; funct3 = 3'b000; Zero = 0; #10; // BEQ (no salta)
         $display(" B-type BEQ | %b  %b     %b    |   %b    %02b      %b      %b        %02b        %03b        %b (Zero=0)",
             op, funct3, funct7, RegWrite, ImmSrc, ALUSrc, MemWrite, ResultSrc, ALUControl, PCSrc);
-        Zero = 1; #10; // BEQ (sí salta)
+        Zero = 1; #10; // BEQ (si salta)
         $display(" B-type BEQ | %b  %b     %b    |   %b    %02b      %b      %b        %02b        %03b        %b (Zero=1)",
             op, funct3, funct7, RegWrite, ImmSrc, ALUSrc, MemWrite, ResultSrc, ALUControl, PCSrc);
 

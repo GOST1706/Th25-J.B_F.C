@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
-// regfile: lecturas s�ncronas (salidas registradas)
 (* keep_hierarchy = "yes" *)
+// regfile: lecturas sincronas (salidas registradas)
 module regfile (
     input  wire        clk,
     input  wire        WE,
@@ -18,7 +18,7 @@ module regfile (
             r[A3] <= WD3;
     end
 
-    // Lectura s�ncrona: muestreamos direcciones en flanco
+    // Lectura sincrona: muestreamos direcciones en flanco
     reg [31:0] rd1_reg, rd2_reg;
     always @(posedge clk) begin
         rd1_reg <= (A1 == 5'd0) ? 32'b0 : r[A1];

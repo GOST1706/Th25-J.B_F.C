@@ -1,27 +1,24 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-(* keep_hierarchy = "yes" *)
+
 module RV32I(
     input clk,
-    input WE_i_mem,
-    input [31:0] WD_i_mem,
+    input WE_mem,
+    input [31:0] WD_mem,
     input Reset,
     output reg [31:0] RESULT
     );
     
-    reg [31:0] PC;
-    wire [31:0] instr0;
+    reg [9:0] PC;
     wire [31:0] instr;
     
     Instruction_memory ins_mem(
         .clk(clk),
-        .WE(WE_i_mem),
-        .As(PC[11:2]),
-        .WD(WD_i_mem),
-        .RD(instr0)
+        .WE(WE_mem),
+        .A(PC[9:0]),
+        .WD(WD_mem),
+        .RD(instr)
     );
-    
-    assign instr = WE_i_mem ? 32'd0 : instr0;
     
     wire [6:0] op;
     wire [2:0] funct3;

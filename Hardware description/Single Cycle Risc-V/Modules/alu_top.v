@@ -11,7 +11,8 @@ module alu_top (
 );
     wire [31:0] add_res, sub_res, and_res, or_res, xor_res, shift_res, comp_res, Bmux, sum1;
 
-    assign Zero = Result[0];
+   assign Zero = ~(|Result);
+
 
     assign sum1 = ~B + 32'b1;
 

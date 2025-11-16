@@ -1,71 +1,86 @@
 `timescale 1ns / 1ps
-module tb_Instruction_Memory;
+module tb_instruction_memory;
 
-   reg clk;
-   reg WE;
-   reg [9:0] A;
-   reg [31:0] WD;
-   wire [31:0] RD;
-   integer i;
+    reg clk;
+    reg WE;
+    reg [31:0] A;
+    reg [31:0] WD;
+    wire [31:0] RD;
 
-   // Instancia del m�dulo principal
-   Instruction_memory uut (
-      .clk(clk),
-      .WE(WE),
-      .As(A),
-      .WD(WD),
-      .RD(RD)
-   );
+    integer i;
 
-   // Instrucciones a cargar
-   reg [31:0] instructions [0:5];
+    // Instancia del módulo bajo prueba
+    Instruction_memory dut (
+        .clk(clk),
+        .WE(WE),
+        .A(A[9:0]),
+        .WD(WD),
+        .RD(RD)
+    );
 
-   // Generar reloj
-   always #5 clk = ~clk;
+    // Generación del reloj (10 ns)
+    always #5 clk = ~clk;
 
-   initial begin
-      clk = 0;
-      WE = 0;
-      A  = 0;
-      WD = 0;
+    // Arreglo con las instrucciones del RV32I
+    reg [31:0] instructions [0:10];
 
-      // ===================================================
-      // Cargar las instrucciones en memoria temporal
-      // ===================================================
-      instructions[0]  = 32'h010000df;
-      instructions[1]  = 32'h0800006f;
-      instructions[2]  = 32'h40000513;
-      instructions[3]  = 32'h40e00593;
-      instructions[4]  = 32'h000006b3;
-      instructions[5]  = 32'h04b50863;
+    initial begin
+        // ===================================================
+        // Inicialización
+        // ===================================================
+        clk = 0;
+        WE  = 0;
+        A   = 0;
+        WD  = 0;
 
-      // ===================================================
-      // Escribir las instrucciones en la memoria
-      // ===================================================
-      WE = 1;
-      for (i = 0; i < 6; i = i + 1) begin
-         A  = i << 2;         // direcci�n en bytes
-         WD = instructions[i];
-         #10;                 // pulso de reloj
-      end
-      WE = 0;
+        // Cargar las instrucciones en el arreglo
+        instructions[0]  = 32'h00500093;
+        instructions[1]  = 32'h00A00113;
+        instructions[2]  = 32'h002081B3;
+        instructions[3]  = 32'h00302023;
+        instructions[4]  = 32'h00002203;
+        instructions[5]  = 32'h00F00293;
+        instructions[6]  = 32'h00520463;
+        instructions[7]  = 32'h06F00313;
+        instructions[8]  = 32'h0040006F;
+        instructions[9]  = 32'h0DE00313;
+        instructions[10] = 32'hFFDFF06F;
 
-      // ===================================================
-      // Leer las instrucciones
-      // ===================================================
-      $display("===========================================================================");
-      $display("                   TESTBENCH: INSTRUCTION MEMORY RISC-V");
-      $display("===========================================================================");
-      $display("  Addr | PC(Dec) |   Instruction (Hex)   |          (Bin)           ");
-      $display("--------------------------------------------------------------------------");
+        // ===================================================
+        // Escritura en memoria (simula la carga del programa)
+        // ===================================================
+        #10;
+        WE = 1;
 
-      for (i = 0; i < 6; i = i + 1) begin
-         A = i << 2;
-         #10;
-         $display("  %02d   |  %04d   |   %08h   |  %032b", i, A, RD, RD);
-      end
-      #10;
-      $display("===========================================================================");
-      $stop;
-   end
+        for (i = 0; i < 11; i = i + 1) begin
+            A  = i * 4;                // Dirección palabra-alineada
+            WD = instructions[i];      // Instrucción a escribir
+            #10;                       // Espera un ciclo
+        end
+
+        WE = 0;
+
+        // ===================================================
+        // Lectura y verificación de memoria
+        // ===================================================
+        #20;
+        $display("=====================================================");
+        $display("    LECTURA DE INSTRUCCIONES DESDE LA MEMORIA");
+        $display("=====================================================");
+
+        for (i = 0; i < 11; i = i + 1) begin
+            A = i * 4;
+            @(posedge clk); // pide lectura
+            @(posedge clk); // espera un ciclo para que RD se actualice
+            $display("Addr = %0d | Esperado = %h | Leido = %h", A, instructions[i], RD);
+        end
+
+
+        $display("=====================================================");
+        $display("              FIN DE SIMULACIÓN");
+        $display("=====================================================");
+        $stop;
+    end
+
 endmodule
+
